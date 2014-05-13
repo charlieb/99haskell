@@ -56,3 +56,6 @@ pack str = packr [] str
       | acc !! 0 /= x = acc:packr [x] xs
       
     
+-- Problem 10
+rle lst = [(len xs, xs !! 0) | xs <- lst]
+
