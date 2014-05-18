@@ -39,6 +39,12 @@ pal (x:xs)
 
 -- Problem 7
 data NestedList a = Elem a | List [NestedList a]
+flatter (List []) = []
+flatter (List (Elem x:xs)) = x:flatter (List xs)
+flatter (List (List x:xs)) = flatter (List x) ++ flatter (List xs)
+
+flatter2 (Elem x) = [x]
+flatter2 (List xs) = foldr (++) [] $ map flatter2 xs
 
 -- Problem 8
 compr [] = []
@@ -57,5 +63,18 @@ pack str = packr [] str
       
     
 -- Problem 10
-rle lst = [(len xs, xs !! 0) | xs <- lst]
+rle1 xs = map (\ x -> (length x, head x)) (pack xs)
+rle2 (lst:lsts) = reverse $ foldl rle2' [(1, lst)] lsts
+  where
+  rle2' ((n,x):xs) y
+    | x == y = ((n+1, x):xs)
+    | x /= y = ((1, y):(n, x):xs)
+
+-- Problem 11
+data RleElement a b = Multiple a b | Single b deriving (Show)
+rle3 lst = map rle3' . rle2 
+  where 
+  rle3' (n,x)
+    | n == 1 = Single x
+    | n > 1  = Multiple n x
 
