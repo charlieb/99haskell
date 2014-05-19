@@ -96,3 +96,20 @@ rle4 = foldr rle4' []
   rle4' x ((n,y):xs) 
     | x == y = ((n+1, x):xs)
     | x /= y = ((1, y):(n, x):xs)
+
+-- Problem 14
+dupli = concatMap (\ x -> [x,x])
+
+-- Problem 15
+duplin lst n = concatMap (\ x -> replicate n x) lst
+duplin2 lst n = concatMap (take n . repeat) lst
+
+-- Problem 16
+dropnth lst n =
+  dropnth' lst n
+  where
+  dropnth' [] _ = []
+  dropnth' (_:xs) 1 = dropnth' xs n
+  dropnth' (x:xs) m = x:(dropnth' xs (m-1))
+
+dropnth2 xs n = map fst $ filter ((n/=) . snd) $ zip xs (cycle [1..n])
