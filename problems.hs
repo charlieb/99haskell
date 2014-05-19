@@ -72,9 +72,27 @@ rle2 (lst:lsts) = reverse $ foldl rle2' [(1, lst)] lsts
 
 -- Problem 11
 data RleElement a b = Multiple a b | Single b deriving (Show)
-rle3 lst = map rle3' . rle2 
+rle3 lst = map rle3' $ rle2 lst
   where 
   rle3' (n,x)
     | n == 1 = Single x
     | n > 1  = Multiple n x
+  rle3'' (1,x) = Single x
+  rle3'' (n,x) = Multiple n x
 
+-- Problem 12
+-- unrle lst = foldr (++) [] $ map unrle' lst
+unrle = concatMap unrle'
+  where
+  unrle' (Multiple n x) = replicate n x
+  unrle' (Single x) = [x]
+
+-- Problem 13
+-- (see rle2 from problem 10)
+rle4 :: Eq a => [a] -> [(Int, a)]
+rle4 = foldr rle4' []
+  where
+  rle4' x [] = [(1,x)] -- need the type definition at the top or haskell doesn't know the type of the [] here
+  rle4' x ((n,y):xs) 
+    | x == y = ((n+1, x):xs)
+    | x /= y = ((1, y):(n, x):xs)
