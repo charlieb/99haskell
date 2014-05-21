@@ -113,3 +113,18 @@ dropnth lst n =
   dropnth' (x:xs) m = x:(dropnth' xs (m-1))
 
 dropnth2 xs n = map fst $ filter ((n/=) . snd) $ zip xs (cycle [1..n])
+
+-- Problem 17
+split lst n = 
+  split' [] lst n
+  where
+  split' x y 0 = (x,y)
+  split' xs (y:ys) n = split' (xs ++ [y]) ys (n-1)
+
+-- Problem 18
+slice lst n m = take (m - n +1) $ drop (n-1) lst
+
+-- Problem 19
+ -- rotate xs n =
+  
+
