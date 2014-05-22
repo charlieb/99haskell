@@ -112,6 +112,8 @@ dropnth lst n =
   dropnth' (_:xs) 1 = dropnth' xs n
   dropnth' (x:xs) m = x:(dropnth' xs (m-1))
 
+  -- interesting because it enumerates the list with a cycle, uses a filter on
+  -- the enumeration, then uses map to remove the enumeration
 dropnth2 xs n = map fst $ filter ((n/=) . snd) $ zip xs (cycle [1..n])
 
 -- Problem 17
@@ -121,10 +123,25 @@ split lst n =
   split' x y 0 = (x,y)
   split' xs (y:ys) n = split' (xs ++ [y]) ys (n-1)
 
+split2 xs n = (drop n xs, take n xs)
+
 -- Problem 18
 slice lst n m = take (m - n +1) $ drop (n-1) lst
 
 -- Problem 19
- -- rotate xs n =
+rotate xs n = 
+  let tpl = split xs (if n >= 0 then n else (length xs) + n) in (snd tpl) ++ (fst tpl)
+
+-- Problem 20
+removeAt n xs = take (n-1) xs ++ drop n xs
+
+  -- Interesting because it's sort of inside out like a prolog program.
+  -- The result is declared first then instructions on how to construct it
+  -- follow.
+removeAt2 1 (x:xs) = (x, xs)
+removeAt2 n (x:xs) = (l, x:r)
+  where (l, r) = removeAt2 (n - 1) xs
+
+
   
 
