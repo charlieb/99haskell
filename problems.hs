@@ -29,7 +29,7 @@ butlast [x] = error "list too short"
 butlast [x,_] = [x]
 butlast (x:xs) = x:butlast xs
 
--- Problem 6
+-- Problem 6 - palindrome
 pal [] = True
 pal [x] = True
 pal [x,y] = x == y
@@ -142,6 +142,25 @@ removeAt2 1 (x:xs) = (x, xs)
 removeAt2 n (x:xs) = (l, x:r)
   where (l, r) = removeAt2 (n - 1) xs
 
+-- Problem 21
+insertAt x xs 0 = x:xs
+insertAt _ [] _ = error "Insertion point beyond end of list"
+insertAt y (x:xs) n = x:insertAt y xs (n-1)
 
-  
+insertAt2 x xs n = (take n xs) ++ [x] ++ (drop n xs)
 
+-- Problem 22
+range x y
+  | x > y = error "Start of range is larger than end"
+  | x == y = [y]
+  | otherwise = x:range (succ x) y
+
+  -- Makes a list of 1's of the right length then adds each one to the total of
+  -- the last + the starting value
+range1 l r = scanl (+) l (replicate (l - r) 1)
+
+  -- Constructs an infinite list starting at x and going up by 1,
+  -- takes the needed elements
+range2 x y = take (y-x+1) $ iterate (+1) x
+
+-- Problem 23
