@@ -1,3 +1,4 @@
+import System.Random (random, randomR, randomRs, StdGen, mkStdGen, getStdGen)
 
 -- Problem 1
 last' [] = error "No last element in zero length list"
@@ -164,3 +165,32 @@ range1 l r = scanl (+) l (replicate (l - r) 1)
 range2 x y = take (y-x+1) $ iterate (+1) x
 
 -- Problem 23
+rnd_select range n =
+  take n $ tail $ map sel $ scanl rnd_sel (random (mkStdGen 0)) [1..]
+  where
+  sel (x,_) = range !! x
+  rnd_sel (_,gen) _ = randomR (0, (length range) -1) gen
+
+  -- Simplified using randomRs instead
+rnd_select2 range n =
+  take n $ [range !! x | x <- randomRs (0, (length range) -1) (mkStdGen 0)]
+
+  -- And if we want a different list each time then we have to use IO
+rnd_select3 range n = do
+  rng <- getStdGen
+  return $ take n $ [range !! x | x <- randomRs (0, (length range) -1) rng]
+
+
+-- Problem 24
+range_select :: Int -> Int -> [Int]
+range_select n m = rnd_select [1..m] n
+
+-- Problem 25
+--rnd_permut [] = []
+rnd_permut xs = do
+  rng <- getStdGen
+  let x = xs !! pos
+      remains = take pos xs ++ drop (pos+1) xs
+      pos = fst $ randomR (0, (length xs) -1) rng
+      in return x:rnd_permut remains
+
