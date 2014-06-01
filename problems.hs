@@ -187,10 +187,12 @@ range_select n m = rnd_select [1..m] n
 
 -- Problem 25
 --rnd_permut [] = []
-rnd_permut xs = do
-  rng <- getStdGen
-  let x = xs !! pos
-      remains = take pos xs ++ drop (pos+1) xs
-      pos = fst $ randomR (0, (length xs) -1) rng
-      in return x:rnd_permut remains
+rnd_permut lst = do
+  seed <- getStdGen
+  return $ rnd_permut' lst seed
+  where rnd_permut' [] _ = []
+        rnd_permut' xs rng = x:rnd_permut' remains rng'
+          where x = xs !! pos
+                remains = take pos xs ++ drop (pos+1) xs
+                (pos, rng') = randomR (0, (length xs) -1) rng
 
