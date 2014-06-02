@@ -1,4 +1,4 @@
-import System.Random (random, randomR, randomRs, StdGen, mkStdGen, getStdGen)
+import System.Random (random, randomR, randomRs, StdGen, mkStdGen, newStdGen)
 import Data.List (permutations)
 
 -- Problem 1
@@ -178,7 +178,7 @@ rnd_select2 range n =
 
   -- And if we want a different list each time then we have to use IO
 rnd_select3 range n = do
-  rng <- getStdGen
+  rng <- newStdGen
   return $ take n $ [range !! x | x <- randomRs (0, (length range) -1) rng]
 
 
@@ -188,7 +188,7 @@ range_select n m = rnd_select [1..m] n
 
 -- Problem 25
 rnd_permut lst = do
-  seed <- getStdGen
+  seed <- newStdGen
   return $ rnd_permut' lst seed
   where rnd_permut' [] _ = []
         rnd_permut' xs rng = x:rnd_permut' remains rng'
@@ -197,7 +197,7 @@ rnd_permut lst = do
                 (pos, rng') = randomR (0, (length xs) -1) rng
 
 rnd_permut1 lst = do
-  seed <- getStdGen
+  seed <- newStdGen
   return $ perms !! (fst $ randomR (0, (length perms) -1) seed)
   where perms = permutations lst
 
