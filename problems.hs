@@ -1,4 +1,5 @@
 import System.Random (random, randomR, randomRs, StdGen, mkStdGen, getStdGen)
+import Data.List (permutations)
 
 -- Problem 1
 last' [] = error "No last element in zero length list"
@@ -186,7 +187,6 @@ range_select :: Int -> Int -> [Int]
 range_select n m = rnd_select [1..m] n
 
 -- Problem 25
---rnd_permut [] = []
 rnd_permut lst = do
   seed <- getStdGen
   return $ rnd_permut' lst seed
@@ -195,4 +195,14 @@ rnd_permut lst = do
           where x = xs !! pos
                 remains = take pos xs ++ drop (pos+1) xs
                 (pos, rng') = randomR (0, (length xs) -1) rng
+
+rnd_permut1 lst = do
+  seed <- getStdGen
+  return $ perms !! (fst $ randomR (0, (length perms) -1) seed)
+  where perms = permutations lst
+
+-- Problem 26
+parts xs = map (\ i -> (take i xs, drop i xs)) [0..(length xs)]
+combinations 1 xs = map (\ x -> [x]) xs
+--combinations n xs = map (\ x -> x:combinations (n-1) xs) xs
 
