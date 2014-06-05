@@ -176,7 +176,7 @@ rnd_select range n =
 rnd_select2 range n =
   take n $ [range !! x | x <- randomRs (0, (length range) -1) (mkStdGen 0)]
 
-  -- And if we want a different list each time then we have to use IO
+  -- And if we want a different list each time then we have to use IO and do
 rnd_select3 range n = do
   rng <- newStdGen
   return $ take n $ [range !! x | x <- randomRs (0, (length range) -1) rng]
