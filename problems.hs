@@ -202,8 +202,9 @@ rnd_permut1 lst = do
   where perms = permutations lst
 
 -- Problem 26
---parts xs = map (\ i -> (take i xs, drop i xs)) [0..(length xs)]
-combinations 1 xs = map (\ x -> [x]) xs
-combinations 2 xs = concatMap (\ (x:xs) -> [[x,y] | y <- xs]) $ take (length xs) $ tails xs
-
-
+  -- double recursion wtih two different termination conditions
+  -- for the two seperate recursive branches
+  -- I guess that's a rule for double recursion!
+combs 1 xs = map (\ x -> [x]) xs
+combs _ [] = []
+combs n (x:xs) = (map (\ y -> x:y) $ combs (n-1) xs) ++ combs n xs
