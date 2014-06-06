@@ -1,5 +1,5 @@
 import System.Random (random, randomR, randomRs, StdGen, mkStdGen, newStdGen)
-import Data.List (permutations)
+import Data.List (permutations, tails)
 
 -- Problem 1
 last' [] = error "No last element in zero length list"
@@ -202,7 +202,8 @@ rnd_permut1 lst = do
   where perms = permutations lst
 
 -- Problem 26
-parts xs = map (\ i -> (take i xs, drop i xs)) [0..(length xs)]
+--parts xs = map (\ i -> (take i xs, drop i xs)) [0..(length xs)]
 combinations 1 xs = map (\ x -> [x]) xs
---combinations n xs = map (\ x -> x:combinations (n-1) xs) xs
+combinations 2 xs = concatMap (\ (x:xs) -> [[x,y] | y <- xs]) $ take (length xs) $ tails xs
+
 
