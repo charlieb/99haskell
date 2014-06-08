@@ -1,5 +1,5 @@
 import System.Random (random, randomR, randomRs, StdGen, mkStdGen, newStdGen)
-import Data.List (permutations, tails)
+import Data.List (delete, elemIndex,  permutations, tails)
 
 -- Problem 1
 last' [] = error "No last element in zero length list"
@@ -208,3 +208,22 @@ rnd_permut1 lst = do
 combs 1 xs = map (\ x -> [x]) xs
 combs _ [] = []
 combs n (x:xs) = (map (\ y -> x:y) $ combs (n-1) xs) ++ combs n xs
+  -- map (x:) can be used instead of map (\ y -> x:y) because (x:) is a
+  -- parially apllied functionk.
+
+-- Problem 27
+mult_delete xs ys = filter (\ x -> elemIndex x xs == Nothing) ys
+group n xs = map (\ comb -> (comb, mult_delete comb xs)) $ combs n xs
+
+group234 xs  
+  | length xs /= 9 = error "Must have exactly 9 elements"
+  | otherwise = 
+    concatMap make_groups twos_threes_and_rest 
+    where twos_and_rest = group 2 xs -- Get a list of all the possible sets of 2 and the remainders
+            -- get all the possible combinations of 3 in each remainder, format:
+            -- (two, [(three, remaining_four) ...])
+          twos_threes_and_rest = map (\ (two, rest) -> (two, group 3 rest)) twos_and_rest
+            -- convert the above format into a list of simple (two, three, four) tuples
+          make_groups grp = map (\ (three, four) -> ((fst grp), three, four)) $ snd grp
+
+
