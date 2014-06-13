@@ -212,7 +212,9 @@ combs n (x:xs) = (map (\ y -> x:y) $ combs (n-1) xs) ++ combs n xs
   -- parially apllied functionk.
 
 -- Problem 27
+--mult_delete :: (Eq t) => [t] -> [t] -> [t]
 mult_delete xs ys = filter (\ x -> elemIndex x xs == Nothing) ys
+--group :: Int -> [t] -> [([t],[t])]
 group n xs = map (\ comb -> (comb, mult_delete comb xs)) $ combs n xs
 
 group234 xs  
@@ -226,14 +228,15 @@ group234 xs
             -- convert the above format into a list of simple (two, three, four) tuples
           make_groups grp = map (\ (three, four) -> ((fst grp), three, four)) $ snd grp
 
-combine_groups :: [t] -> [[[t]]] -> [[[t]]]
-combine_groups grp = map (grp:)
-
 -- groups "abcd" [1,2,1] -> [["a", "bc", "d"] ...]
 -- groups [1,2,3,4] [1,2,1] -> [[[1], [2,3], [4]] ...]
 --groups :: [t] -> [Int] -> [[[t]]]
+  -- ground condition is to get all the possible groups for single n and
+  -- remove the remainders
 groups xs [n] = map (\ (grp, _) -> [grp]) $ group n xs
-groups xs (g:gs) = 
-  concatMap (\ (grp, remainder) -> combine_groups grp $ groups remainder gs) grps
-  where grps = group g xs
+  -- otherwise combine each group of n with all possible groups generated
+  -- from the remainder and the remaining ns
+groups xs (n:ns) = 
+  concatMap (\ (grp, remainder) -> map (grp:) $ groups remainder ns) grps
+  where grps = group n xs
   
