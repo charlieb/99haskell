@@ -226,10 +226,14 @@ group234 xs
             -- convert the above format into a list of simple (two, three, four) tuples
           make_groups grp = map (\ (three, four) -> ((fst grp), three, four)) $ snd grp
 
-groups :: [t] -> [Int] -> [[[t]]]
-groups _ [] = [[[]]]
+combine_groups :: [t] -> [[[t]]] -> [[[t]]]
+combine_groups grp = map (grp:)
+
+-- groups "abcd" [1,2,1] -> [["a", "bc", "d"] ...]
+-- groups [1,2,3,4] [1,2,1] -> [[[1], [2,3], [4]] ...]
+--groups :: [t] -> [Int] -> [[[t]]]
+groups xs [n] = map (\ (grp, _) -> [grp]) $ group n xs
 groups xs (g:gs) = 
-  concatMap (\ (grp, remainder) -> combine_grps grp $ groups remainder gs) grps
+  concatMap (\ (grp, remainder) -> combine_groups grp $ groups remainder gs) grps
   where grps = group g xs
-        combine_grps grp = map (grp:)
   
