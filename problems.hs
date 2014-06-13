@@ -211,6 +211,17 @@ combs n (x:xs) = (map (\ y -> x:y) $ combs (n-1) xs) ++ combs n xs
   -- map (x:) can be used instead of map (\ y -> x:y) because (x:) is a
   -- parially apllied functionk.
 
+-- a half done distraction to try to avoid using mult_delete below
+-- because elemIndex requires x to be (Eq x) and I'm not sure that's
+-- really needed
+combs2 1 xs = 
+  map take_one $ take (length xs) $ iterate (1+) 0
+  where 
+    take_one n = (head back, front ++ tail back) 
+      where 
+        front = take n xs
+        back = drop n xs
+
 -- Problem 27
 --mult_delete :: (Eq t) => [t] -> [t] -> [t]
 mult_delete xs ys = filter (\ x -> elemIndex x xs == Nothing) ys
