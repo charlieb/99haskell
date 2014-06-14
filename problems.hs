@@ -1,5 +1,6 @@
 import System.Random (random, randomR, randomRs, StdGen, mkStdGen, newStdGen)
-import Data.List (delete, elemIndex,  permutations, tails)
+import Data.List (delete, elemIndex,  permutations, tails, sortBy, groupBy)
+import Data.Maybe (fromMaybe)
 
 -- Problem 1
 last' [] = error "No last element in zero length list"
@@ -223,9 +224,9 @@ combs2 1 xs =
         back = drop n xs
 
 -- Problem 27
---mult_delete :: (Eq t) => [t] -> [t] -> [t]
+mult_delete :: (Eq t) => [t] -> [t] -> [t]
 mult_delete xs ys = filter (\ x -> elemIndex x xs == Nothing) ys
---group :: Int -> [t] -> [([t],[t])]
+group :: (Eq t) => Int -> [t] -> [([t],[t])]
 group n xs = map (\ comb -> (comb, mult_delete comb xs)) $ combs n xs
 
 group234 xs  
@@ -241,7 +242,9 @@ group234 xs
 
 -- groups "abcd" [1,2,1] -> [["a", "bc", "d"] ...]
 -- groups [1,2,3,4] [1,2,1] -> [[[1], [2,3], [4]] ...]
---groups :: [t] -> [Int] -> [[[t]]]
+groups :: (Eq t) => [t] -> [Int] -> [[[t]]]
+  -- ask for no groups and you'll get no groups
+groups _ [] = []
   -- ground condition is to get all the possible groups for single n and
   -- remove the remainders
 groups xs [n] = map (\ (grp, _) -> [grp]) $ group n xs
@@ -251,3 +254,41 @@ groups xs (n:ns) =
   concatMap (\ (grp, remainder) -> map (grp:) $ groups remainder ns) grps
   where grps = group n xs
   
+-- Problem 28
+lsort :: [[t]] -> [[t]]
+lsort = sortBy (\ x y -> compare (length x) (length y))
+
+alist_get :: (Eq t) => t -> [(t,s)] -> Maybe s
+alist_get _ [] = Nothing
+alist_get key ((k,v):xs) 
+  | k == key = Just v
+  | otherwise = alist_get key xs
+
+alist_put :: (Eq t) => t -> s -> [(t,s)] -> [(t,s)]
+alist_put k v [] = [(k,v)]
+alist_put k v ((k',v'):xs)
+  | k == k' = (k,v):xs
+  | otherwise = (k',v'):alist_put k v xs
+
+lfsort :: [[t]] -> [[t]]
+lfsort xs =
+  sortBy (\ x y -> compare (alist_get (length x) freqs) (alist_get (length y) freqs)) xs
+  where
+  freqs = foldl count_lengths [] $ map length xs :: [(Int, Int)]
+    where 
+      count_lengths alist len = alist_put len (1+val) alist
+        where
+          val = fromMaybe 0 $ alist_get len alist
+
+  -- from the solutions page
+  -- sorts the list into length order 
+  -- groups the lists into equal length sub-lists (groupBy equalLength)
+  -- uses lsort to sort them by length again
+  -- concatenates all the sublists
+  -- more elegant than my solution :(
+lfsort1 :: [[a]] -> [[a]]
+lfsort1 lists = concat groups
+  where groups = lsort $ groupBy equalLength $ lsort lists
+        equalLength xs ys = length xs == length ys
+
+
